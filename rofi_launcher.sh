@@ -179,11 +179,13 @@ main() {
     
     echo "DEBUG: Selected script: $script" >> "$DEBUG_LOG"
     
-    # Handle dashboard selection
+    # Construct script path
+    local script_path
     if [[ "$script" == "dashboard" ]]; then
-        local script_path="$SCRIPTS_DIR/dashboard.sh"
+        # Dashboard is in the admin category
+        script_path="$SCRIPTS_DIR/admin/dashboard.sh"
     else
-        local script_path="$SCRIPTS_DIR/$category/$script.sh"
+        script_path="$SCRIPTS_DIR/$category/$script.sh"
     fi
     
     echo "DEBUG: Final script path: $script_path" >> "$DEBUG_LOG"
