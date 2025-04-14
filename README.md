@@ -221,6 +221,6 @@ Each script can be configured through its respective configuration file in the `
 
 <div align="center">
 
-Made with <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Red%20Heart.png" alt="Red Heart" width="20" height="20" /> by KleaSCM
+Made by by KleaSCM
 
 </div>
