@@ -102,17 +102,14 @@ show_script_selection() {
     echo "DEBUG: Showing script selection for category: $category" >> "$DEBUG_LOG"
     echo "DEBUG: Current directory: $(pwd)" >> "$DEBUG_LOG"
     
-    # Add dashboard if in root category
-    if [[ "$category" == "sorted" ]]; then
-        local dashboard_path="$SCRIPTS_DIR/dashboard.sh"
-        echo "DEBUG: Checking dashboard path: $dashboard_path" >> "$DEBUG_LOG"
-        if [[ -f "$dashboard_path" ]]; then
-            echo "DEBUG: Adding dashboard to options" >> "$DEBUG_LOG"
-            scripts+=("dashboard")
-            descriptions+=("Main dashboard interface")
-        else
-            echo "DEBUG: Dashboard not found at: $dashboard_path" >> "$DEBUG_LOG"
-        fi
+    # Always add dashboard as the first option
+    local dashboard_path="$SCRIPTS_DIR/admin/dashboard.sh"
+    if [[ -f "$dashboard_path" ]]; then
+        echo "DEBUG: Adding dashboard to options" >> "$DEBUG_LOG"
+        scripts+=("dashboard")
+        descriptions+=("Main dashboard interface")
+    else
+        echo "DEBUG: Dashboard not found at: $dashboard_path" >> "$DEBUG_LOG"
     fi
     
     # Find all scripts in category
