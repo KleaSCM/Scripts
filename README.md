@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/High%20Voltage.png" alt="High Voltage" width="25" height="25" /> Script Management System <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/High%20Voltage.png" alt="High Voltage" width="25" height="25" />
+# Script Management
 
 <div align="center">
 
@@ -217,31 +217,7 @@ Each script can be configured through its respective configuration file in the `
 
 </div>
 
-## 👏 Acknowledgments
-
-- ASCII art by [Artist Name]
-- Sound effects from [Source]
-- Inspiration from [Project/Person]
-
-## 📞 Support
-
-<div align="center">
-
-[![Discord](https://img.shields.io/badge/Discord-Support-00ff00?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/your-server)
-[![Twitter](https://img.shields.io/badge/Twitter-Follow-00ff00?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/your-handle)
-[![Email](https://img.shields.io/badge/Email-Contact-00ff00?style=for-the-badge&logo=gmail&logoColor=white)](mailto:your-email@example.com)
-
-</div>
-
 ---
-
-<div align="center">
-
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/made-with-bash.svg)](https://forthebadge.com)
-[![forthebadge](https://forthebadge.com/images/badges/powered-by-coffee.svg)](https://forthebadge.com)
-
-</div>
 
 <div align="center">
 
