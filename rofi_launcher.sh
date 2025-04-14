@@ -140,8 +140,12 @@ show_script_selection() {
     
     [[ -z "$selection" ]] && return 1
     
-    # Extract script name from selection
-    echo "${selection%% - *}"
+    # Extract script name from selection and trim any whitespace
+    local script_name="${selection%% - *}"
+    script_name="${script_name%"${script_name##*[![:space:]]}"}"  # Trim trailing whitespace
+    script_name="${script_name#"${script_name%%[![:space:]]*}"}"  # Trim leading whitespace
+    
+    echo "$script_name"
     return 0
 }
 
