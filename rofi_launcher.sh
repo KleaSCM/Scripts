@@ -140,12 +140,8 @@ show_script_selection() {
     
     [[ -z "$selection" ]] && return 1
     
-    # Extract script name from selection and trim any whitespace
-    local script_name="${selection%% - *}"
-    script_name="${script_name%"${script_name##*[![:space:]]}"}"  # Trim trailing whitespace
-    script_name="${script_name#"${script_name%%[![:space:]]*}"}"  # Trim leading whitespace
-    
-    echo "$script_name"
+    # Extract script name from selection
+    echo "${selection%% - *}"
     return 0
 }
 
@@ -171,9 +167,10 @@ main() {
     
     echo "DEBUG: Selected category: $category" >> "$DEBUG_LOG"
     
-    # Choose script
+    # Choose script and sanitize whitespace
     local script
     script=$(show_script_selection "$category")
+    script=$(echo "$script" | xargs)  # Remove leading/trailing whitespace
     
     [[ -z "$script" ]] && {
         log "No script selected"
