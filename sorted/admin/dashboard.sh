@@ -7,8 +7,9 @@
 # Last Modified: $(date +%Y-%m-%d)
 # Dependencies: bash >= 4.0, notify-send, mpv, sensors, htop, nmcli
 
-# Source common functions
-source "$(dirname "$0")/lib/common.sh" || {
+# Get the absolute path of the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/common.sh" || {
     echo "Error: Failed to load common functions"
     exit 1
 }
@@ -17,11 +18,13 @@ source "$(dirname "$0")/lib/common.sh" || {
 init_logging
 
 # Configuration
-CONFIG_DIR="$(dirname "$0")/config"
+CONFIG_DIR="$SCRIPT_DIR/../config"
 CONFIG_FILE="$CONFIG_DIR/dashboard.conf"
 FAVORITES_FILE="$CONFIG_DIR/favorites.conf"
 HISTORY_FILE="$CONFIG_DIR/history.log"
 THEME_FILE="$CONFIG_DIR/theme.conf"
+SOUNDS_DIR="$SCRIPT_DIR/../sounds"
+LOGS_DIR="$SCRIPT_DIR/../logs"
 
 # Load configuration
 load_config() {
@@ -70,9 +73,9 @@ load_theme() {
 play_sound() {
     [[ "$SOUND_EFFECTS" == "true" ]] && {
         case "$1" in
-            "success") mpv --no-video --quiet "$(dirname "$0")/sounds/success.mp3" &>/dev/null & ;;
-            "error") mpv --no-video --quiet "$(dirname "$0")/sounds/error.mp3" &>/dev/null & ;;
-            "notification") mpv --no-video --quiet "$(dirname "$0")/sounds/notification.mp3" &>/dev/null & ;;
+            "success") mpv --no-video --quiet "$SOUNDS_DIR/success.mp3" &>/dev/null & ;;
+            "error") mpv --no-video --quiet "$SOUNDS_DIR/error.mp3" &>/dev/null & ;;
+            "notification") mpv --no-video --quiet "$SOUNDS_DIR/notification.mp3" &>/dev/null & ;;
         esac
     }
 }
@@ -130,7 +133,7 @@ show_process_monitor() {
 # Script Search
 search_scripts() {
     local query="$1"
-    find "$(dirname "$0")" -type f -name "*.sh" -exec grep -l "$query" {} \;
+    find "$SCRIPT_DIR" -type f -name "*.sh" -exec grep -l "$query" {} \;
 }
 
 # Recent History
