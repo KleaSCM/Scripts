@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 
 # Script: dashboard.sh
 # Description: Advanced script management system dashboard

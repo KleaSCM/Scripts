@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 
 # Script: web_dev_menu.sh
 # Description: Web development tools and utilities menu

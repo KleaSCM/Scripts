@@ -1,211 +1,197 @@
 #!/bin/bash
 
 # Script: rofi_launcher.sh
-# Description: Enhanced script launcher with Rofi interface
+# Description: Rofi-based script launcher with performance monitoring
 # Author: KleaSCM
-# Version: 2.0.0
+# Version: 1.0.0
 # Last Modified: $(date +%Y-%m-%d)
-# Dependencies: bash >= 4.0, rofi, find, notify-send, mpv
+# Dependencies: bash >= 4.0, rofi, notify-send
 
-# Source common functions
-source "$(dirname "$0")/sorted/lib/common.sh" || {
+# Get the absolute path of the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/sorted/lib/common.sh" || {
     echo "Error: Failed to load common functions"
     exit 1
 }
 
-# Configuration
-SCRIPTS_DIR="$HOME/Documents/Scripts/sorted"
-LOG_FILE="$SCRIPTS_DIR/logs/launcher.log"
-DEBUG_LOG="/tmp/rofi_launcher_debug.log"
-CONFIG_FILE="$SCRIPTS_DIR/config/launcher.conf"
-SOUNDS_DIR="$SCRIPTS_DIR/sounds"
-
 # Initialize logging
 init_logging
 
-# Clear debug log
-echo "" > "$DEBUG_LOG"
+# Configuration
+CONFIG_DIR="$SCRIPT_DIR/sorted/config"
+CONFIG_FILE="$CONFIG_DIR/rofi_launcher.conf"
+LOG_FILE="$SCRIPT_DIR/sorted/logs/launcher_history.log"
 
-# Load configuration if exists
-[[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
+# Terminal emulators in order of preference
+TERMINALS=(
+    "kitty --hold"
+    "alacritty -e"
+    "wezterm start"
+    "foot"
+    "konsole --noclose -e"
+    "xterm -e"
+)
 
-# Function to get script description
-get_script_description() {
-    local script_path="$1"
-    local description
-    
-    # Try to extract description from script header
-    description=$(grep -m 1 "^# Description:" "$script_path" 2>/dev/null | sed 's/^# Description: //')
-    
-    if [[ -z "$description" ]]; then
-        description="No description available"
-    fi
-    
-    echo "$description"
-}
+# Ensure log directory exists
+mkdir -p "$(dirname "$LOG_FILE")"
 
-# Function to validate script
-validate_script() {
-    local script_path="$1"
-    
-    echo "DEBUG: Validating script: $script_path" >> "$DEBUG_LOG"
-    echo "DEBUG: Current directory: $(pwd)" >> "$DEBUG_LOG"
-    echo "DEBUG: Script exists: $([[ -f "$script_path" ]] && echo "yes" || echo "no")" >> "$DEBUG_LOG"
-    echo "DEBUG: Script permissions: $(ls -l "$script_path" 2>/dev/null)" >> "$DEBUG_LOG"
-    
-    if [[ ! -f "$script_path" ]]; then
-        error "Script not found: $script_path"
-        echo "ERROR: Script not found at path: $script_path" >> "$DEBUG_LOG"
-        return 1
-    fi
-    
-    if [[ ! -x "$script_path" ]]; then
-        warn "Script is not executable, attempting to fix permissions"
-        echo "WARN: Attempting to make script executable: $script_path" >> "$DEBUG_LOG"
-        
-        if ! chmod +x "$script_path"; then
-            error "Failed to make script executable: $script_path"
-            echo "ERROR: Failed to make script executable" >> "$DEBUG_LOG"
-            echo "ERROR: Current permissions: $(ls -l "$script_path")" >> "$DEBUG_LOG"
-            echo "ERROR: Current user: $(whoami)" >> "$DEBUG_LOG"
-            return 1
-        fi
-        
-        echo "SUCCESS: Made script executable" >> "$DEBUG_LOG"
-    fi
-    
-    echo "SUCCESS: Script validated successfully" >> "$DEBUG_LOG"
-    return 0
-}
+# Color definitions
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
 
-# Function to play sound effect
-play_sound() {
-    local sound="$1"
-    if [[ -f "$SOUNDS_DIR/$sound" ]]; then
-        mpv --no-video "$SOUNDS_DIR/$sound" &>/dev/null &
-    fi
-}
-
-# Function to show notification
-show_notification() {
-    local title="$1"
-    local message="$2"
-    notify-send "$title" "$message"
-}
-
-# Function to display script selection
+# Function to display script selection menu
 show_script_selection() {
-    local category="$1"
-    local scripts=()
-    local descriptions=()
+    # Find all .sh files in the sorted directory and its subdirectories
+    local scripts=$(find "$SCRIPT_DIR/sorted" -type f -name "*.sh" | sort)
     
-    echo "DEBUG: Showing script selection for category: $category" >> "$DEBUG_LOG"
-    echo "DEBUG: Current directory: $(pwd)" >> "$DEBUG_LOG"
+    # Format for rofi with category and full path preserved
+    local selection=$(echo "$scripts" | while read -r script; do
+        category=$(basename "$(dirname "$script")")
+        echo "[$category] $(basename "$script") - $script"
+    done | rofi -dmenu -p "Select script:" -i)
     
-    # Always add dashboard as the first option
-    local dashboard_path="$SCRIPTS_DIR/admin/dashboard.sh"
-    if [[ -f "$dashboard_path" ]]; then
-        echo "DEBUG: Adding dashboard to options" >> "$DEBUG_LOG"
-        scripts+=("admin/dashboard")
-        descriptions+=("Main dashboard interface")
-    else
-        echo "DEBUG: Dashboard not found at: $dashboard_path" >> "$DEBUG_LOG"
+    # Return the full path of the selected script
+    if [ -n "$selection" ]; then
+        echo "$selection" | awk -F ' - ' '{print $2}'
     fi
+}
+
+# Function to start performance timer
+start_timer() {
+    start_time=$(date +%s.%N)
+}
+
+# Function to stop timer and calculate duration
+stop_timer() {
+    end_time=$(date +%s.%N)
+    duration=$(echo "$end_time - $start_time" | bc)
+    echo "$duration"
+}
+
+# Function to monitor system resources
+monitor_resources() {
+    local pid=$1
+    local max_cpu=0
+    local max_mem=0
     
-    # Find all scripts in category
-    while IFS= read -r script; do
-        local script_name="${script%.sh}"
-        local script_path="$SCRIPTS_DIR/$category/$script"
-        local description
+    # Wait a short time to ensure the process is running
+    sleep 0.05
+    
+    while kill -0 $pid 2>/dev/null; do
+        local cpu=$(ps -p $pid -o %cpu | tail -n1)
+        local mem=$(ps -p $pid -o %mem | tail -n1)
         
-        echo "DEBUG: Processing script: $script_path" >> "$DEBUG_LOG"
-        
-        if validate_script "$script_path"; then
-            description=$(get_script_description "$script_path")
-            scripts+=("$category/$script_name")
-            descriptions+=("$description")
-            echo "DEBUG: Added script to options: $script_name" >> "$DEBUG_LOG"
-        else
-            echo "DEBUG: Failed to validate script: $script_path" >> "$DEBUG_LOG"
+        # Update max values if current values are higher
+        if (( $(echo "$cpu > $max_cpu" | bc -l) )); then
+            max_cpu=$cpu
         fi
-    done < <(find "$SCRIPTS_DIR/$category" -type f -name "*.sh" -printf "%f\n" | sort)
+        if (( $(echo "$mem > $max_mem" | bc -l) )); then
+            max_mem=$mem
+        fi
+        
+        sleep 0.1
+    done
     
-    # Create selection menu with descriptions
-    local selection
-    selection=$(printf "%s - %s\n" "${scripts[@]}" "${descriptions[@]}" | \
-        rofi -dmenu -i -p "$category:" -format 's' -sep '-' -columns 1 -lines 10)
+    echo "$max_cpu $max_mem"
+}
+
+# Function to launch script in terminal
+launch_in_terminal() {
+    local script_path="$1"
     
-    [[ -z "$selection" ]] && return 1
+    for term in "${TERMINALS[@]}"; do
+        local term_cmd=$(echo "$term" | cut -d' ' -f1)
+        if command -v "$term_cmd" &>/dev/null; then
+            $term bash "$script_path" &
+            return $?
+        fi
+    done
     
-    # Extract script name from selection
-    echo "${selection%% - *}"
-    return 0
+    notify-send "Script Launcher" "No terminal emulator found for interactive script."
+    return 1
 }
 
 # Main function
 main() {
-    log "Starting script launcher"
-    echo "DEBUG: Starting main function" >> "$DEBUG_LOG"
-    echo "DEBUG: SCRIPTS_DIR: $SCRIPTS_DIR" >> "$DEBUG_LOG"
-    echo "DEBUG: Current directory: $(pwd)" >> "$DEBUG_LOG"
+    # Show script selection menu
+    local script_path=$(show_script_selection)
     
-    # Play startup sound
-    play_sound "startup.mp3"
-    
-    # Choose category
-    local category
-    category=$(find "$SCRIPTS_DIR" -mindepth 1 -maxdepth 1 -type d -printf "%f\n" | sort | \
-        rofi -dmenu -i -p "Category:")
-    
-    [[ -z "$category" ]] && {
-        log "No category selected"
+    # Exit if no script was selected
+    if [ -z "$script_path" ]; then
+        echo "No script selected"
         exit 0
-    }
+    fi
     
-    echo "DEBUG: Selected category: $category" >> "$DEBUG_LOG"
-    
-    # Choose script and sanitize whitespace
-    local script
-    script=$(show_script_selection "$category")
-    script=$(echo "$script" | xargs)  # Remove leading/trailing whitespace
-    
-    [[ -z "$script" ]] && {
-        log "No script selected"
-        exit 0
-    }
-    
-    echo "DEBUG: Selected script: $script" >> "$DEBUG_LOG"
-    
-    # Construct script path
-    local script_path="$SCRIPTS_DIR/$script.sh"
-    echo "DEBUG: Final script path: $script_path" >> "$DEBUG_LOG"
-    
-    # Validate and run script
-    if validate_script "$script_path"; then
-        log "Executing script: $script_path"
-        show_notification "Script Launcher" "Starting $script..."
-        play_sound "execute.mp3"
-        
-        start_timer
-        (cd "$(dirname "$script_path")" && ./$(basename "$script_path"))
-        local exit_code=$?
-        
-        log "Script execution completed in $(get_elapsed_time) with exit code: $exit_code"
-        show_notification "Script Launcher" "Script completed with exit code: $exit_code"
-        play_sound "complete.mp3"
-        
-        exit $exit_code
-    else
-        error "Failed to validate script: $script_path"
-        show_notification "Script Launcher" "Failed to validate script: $script"
-        play_sound "error.mp3"
-        echo "ERROR: Final validation failed for: $script_path" >> "$DEBUG_LOG"
-        echo "ERROR: Current directory: $(pwd)" >> "$DEBUG_LOG"
-        echo "ERROR: Script exists: $([[ -f "$script_path" ]] && echo "yes" || echo "no")" >> "$DEBUG_LOG"
-        echo "ERROR: Script permissions: $(ls -l "$script_path" 2>/dev/null)" >> "$DEBUG_LOG"
+    # Validate script path is within sorted directory
+    if [[ "$script_path" != "$SCRIPT_DIR/sorted/"* ]]; then
+        notify-send "Invalid Selection" "Selected script is not within $SCRIPT_DIR/sorted"
         exit 1
     fi
+    
+    # Make script executable if it isn't already
+    [[ -x "$script_path" ]] || chmod +x "$script_path"
+    
+    # Check if script is interactive
+    if grep -q "^# @interactive" "$script_path"; then
+        # Launch in terminal
+        if launch_in_terminal "$script_path"; then
+            # Skip monitoring and logging for terminal-based interactive scripts
+            echo "$(date '+%F %T') | $script_path | Launched in terminal." >> "$LOG_FILE"
+            notify-send "Script Launched in Terminal" "$script_path"
+            exit 0
+        else
+            notify-send "Script Launcher Error" "Failed to launch in terminal."
+            exit 1
+        fi
+    fi
+    
+    # Start the timer
+    start_timer
+    
+    # Create temporary file for resource monitoring
+    local resource_tmp=$(mktemp)
+    
+    # Run non-interactive script silently
+    bash "$script_path" &
+    local script_pid=$!
+    
+    # Monitor resources in background and save to temp file
+    monitor_resources $script_pid > "$resource_tmp" &
+    local monitor_pid=$!
+    
+    # Wait for the script to finish and get its exit code
+    wait $script_pid
+    local exit_code=$?
+    
+    # Wait for monitor to finish and get the results
+    wait $monitor_pid
+    read max_cpu max_mem < "$resource_tmp"
+    rm "$resource_tmp"
+    
+    # Stop the timer and get the duration
+    local duration=$(stop_timer)
+    
+    # Log the execution
+    echo "$(date '+%F %T') | $script_path | Duration: ${duration}s | CPU: ${max_cpu}% | MEM: ${max_mem}%" >> "$LOG_FILE"
+    
+    # Display performance summary
+    echo -e "${BLUE}Performance Summary:${NC}"
+    echo -e "Duration: ${YELLOW}${duration}s${NC}"
+    echo -e "Max CPU Usage: ${YELLOW}${max_cpu}%${NC}"
+    echo -e "Max Memory Usage: ${YELLOW}${max_mem}%${NC}"
+    
+    # Send desktop notification
+    if [ $exit_code -eq 0 ]; then
+        notify-send "Script Completed" "Duration: ${duration}s\nMax CPU: ${max_cpu}%\nMax Memory: ${max_mem}%"
+    else
+        notify-send "Script Failed" "Exit code: $exit_code\nDuration: ${duration}s"
+    fi
+    
+    return $exit_code
 }
 
-# Run main function
-main "$@"
+# Run the main function
+main

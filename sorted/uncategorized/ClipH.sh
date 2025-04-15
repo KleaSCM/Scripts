@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Clipboard integration for terminal
 
 echo "=== Clipboard Helper ==="

@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # coding_ui.sh
 # A cute and colorful Bash UI for coding setup scripts.
 

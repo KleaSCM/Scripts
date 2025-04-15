@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: TrsUI.sh
 # Description: Terminal UI script
 # Author: KleaSCM

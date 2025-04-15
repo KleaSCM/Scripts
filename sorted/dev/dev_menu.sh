@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 
 # Script: dev_menu.sh
 # Description: Development tools and utilities menu

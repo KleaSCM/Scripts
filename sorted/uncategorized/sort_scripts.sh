@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# @interactive
 BASE_DIR="$HOME/Documents/Scripts"
 
 # Define keyword-to-folder mappings

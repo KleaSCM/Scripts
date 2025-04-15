@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash 
+# @interactive
 # Manage terminal tabs (tmux example)
 
 # Script: TabM.sh

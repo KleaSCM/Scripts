@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# @interactive
 # Script: test_framework.sh
 # Description: Test framework for validating scripts
 # Author: KleaSCM

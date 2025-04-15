@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: CleanT.sh
 # Description: Clean Terminal script
 # Author: KleaSCM

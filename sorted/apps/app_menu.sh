@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 
 # Script: app_menu.sh
 # Description: Application management and utilities menu

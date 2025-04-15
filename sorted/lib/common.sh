@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 
 # Script: common.sh
 # Description: Common functions and utilities for all scripts

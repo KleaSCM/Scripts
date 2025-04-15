@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: system_ui.sh
 # Description: System management and diagnostics interface
 # Author: KleaSCM

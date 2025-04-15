@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash 
+# @interactive
 # Script: WH.sh
 # Description: Window Handler script
 # Author: KleaSCM

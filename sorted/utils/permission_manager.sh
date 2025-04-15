@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: GoddessScript.sh
 # Description: Goddess Script
 # Author: KleaSCM

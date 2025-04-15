@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Manage tmux sessions
 
 echo "=== Terminal Session Manager ==="

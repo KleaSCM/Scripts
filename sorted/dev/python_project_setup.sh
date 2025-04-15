@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: PythonSetUp.sh
 # Description: Python setup script
 # Author: KleaSCM

@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # setup_html_project.sh
 # Sets up an HTML boilerplate with a custom project name.
 

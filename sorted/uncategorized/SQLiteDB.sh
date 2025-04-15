@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # setup_sqlite_db.sh
 # Sets up a SQLite database with a basic schema.
 

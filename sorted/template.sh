@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# @interactive
 # Script: template.sh
 # Description: Template script with standardized structure
 # Author: KleaSCM

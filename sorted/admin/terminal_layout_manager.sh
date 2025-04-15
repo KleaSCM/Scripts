@@ -1,4 +1,6 @@
 #!/bin/bash
+# @interactive
+
 # Save and restore terminal layout (tmux example)
 
 # Script: SvTLayout.sh

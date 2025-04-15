@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # setup_cpp_project.sh
 # Sets up a basic C++ project with CMake
 

@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # utils_ui.sh
 # A cute and colorful Bash UI for utility scripts.
 

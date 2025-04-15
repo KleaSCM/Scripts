@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Fix and validate all scripts in ~/Documents/Scripts/sorted/
 
 BASE_DIR="$HOME/Documents/Scripts/sorted"

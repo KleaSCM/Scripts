@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: system_diagnostics.sh
 # Description: System diagnostics and health monitoring
 # Author: KleaSCM

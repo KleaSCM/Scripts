@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # setup_go_project.sh
 # Installs Go, sets up the environment, and creates a new Go project.
 

@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/bash 
+# @interactive
 # Launch multiple terminal windows
 
 # Script: LaunchT.sh

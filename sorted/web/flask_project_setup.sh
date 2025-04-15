@@ -1,4 +1,5 @@
 #!/bin/bash
+# @interactive
 # Script: Python flask.sh
 # Description: Python Flask setup script
 # Author: KleaSCM
