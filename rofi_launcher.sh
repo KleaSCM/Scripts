@@ -150,18 +150,24 @@ handle_wallpaper_mode() {
 
 # Function to display script selection menu
 show_script_selection() {
-    # Find all .sh files in the sorted directory and its subdirectories
-    local scripts=$(find "$SCRIPT_DIR/sorted" -type f -name "*.sh" | sort)
+    # First show category selection
+    local categories=$(find "$SCRIPT_DIR/sorted" -mindepth 1 -maxdepth 1 -type d | sort | while read -r dir; do
+        echo "$(basename "$dir")"
+    done)
     
-    # Format for rofi with category and full path preserved
-    local selection=$(echo "$scripts" | while read -r script; do
-        category=$(basename "$(dirname "$script")")
-        echo "[$category] $(basename "$script") - $script"
-    done | rofi -dmenu -p "Select script:" -i)
+    local category=$(echo "$categories" | rofi -dmenu -p "Select Category:" -i)
+    if [ -z "$category" ]; then
+        return
+    fi
     
-    # Return the full path of the selected script
+    # Then show scripts in that category
+    local scripts=$(find "$SCRIPT_DIR/sorted/$category" -type f -name "*.sh" | sort | while read -r script; do
+        echo "$(basename "$script" .sh)"
+    done)
+    
+    local selection=$(echo "$scripts" | rofi -dmenu -p "Select Script:" -i)
     if [ -n "$selection" ]; then
-        echo "$selection" | awk -F ' - ' '{print $2}'
+        echo "$SCRIPT_DIR/sorted/$category/$selection.sh"
     fi
 }
 
