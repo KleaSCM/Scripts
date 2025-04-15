@@ -106,7 +106,7 @@ show_script_selection() {
     local dashboard_path="$SCRIPTS_DIR/admin/dashboard.sh"
     if [[ -f "$dashboard_path" ]]; then
         echo "DEBUG: Adding dashboard to options" >> "$DEBUG_LOG"
-        scripts+=("dashboard")
+        scripts+=("admin/dashboard")
         descriptions+=("Main dashboard interface")
     else
         echo "DEBUG: Dashboard not found at: $dashboard_path" >> "$DEBUG_LOG"
@@ -122,7 +122,7 @@ show_script_selection() {
         
         if validate_script "$script_path"; then
             description=$(get_script_description "$script_path")
-            scripts+=("$script_name")
+            scripts+=("$category/$script_name")
             descriptions+=("$description")
             echo "DEBUG: Added script to options: $script_name" >> "$DEBUG_LOG"
         else
@@ -177,7 +177,7 @@ main() {
     echo "DEBUG: Selected script: $script" >> "$DEBUG_LOG"
     
     # Construct script path
-    local script_path="$SCRIPTS_DIR/$category/$script.sh"
+    local script_path="$SCRIPTS_DIR/$script.sh"
     echo "DEBUG: Final script path: $script_path" >> "$DEBUG_LOG"
     
     # Validate and run script
@@ -187,7 +187,7 @@ main() {
         play_sound "execute.mp3"
         
         start_timer
-        "$script_path"
+        (cd "$(dirname "$script_path")" && ./$(basename "$script_path"))
         local exit_code=$?
         
         log "Script execution completed in $(get_elapsed_time) with exit code: $exit_code"

@@ -1,10 +1,24 @@
 #!/bin/bash
 # Script: system_ui.sh
-# Description: OS User Interface script
+# Description: System management and diagnostics interface
 # Author: KleaSCM
 # Version: 1.0.0
 # Last Modified: $(date +%Y-%m-%d)
-# Dependencies: bash >= 4.0
+# Dependencies: bash >= 4.0, notify-send
+
+# Get the absolute path of the script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/common.sh" || {
+    echo "Error: Failed to load common functions"
+    exit 1
+}
+
+# Initialize logging
+init_logging
+
+# Configuration
+CONFIG_DIR="$SCRIPT_DIR/../config"
+CONFIG_FILE="$CONFIG_DIR/system_ui.conf"
 
 # systems_ui.sh
 # A cute and colorful Bash UI for system-level scripts.

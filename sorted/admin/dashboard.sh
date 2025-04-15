@@ -133,7 +133,7 @@ show_process_monitor() {
 # Script Search
 search_scripts() {
     local query="$1"
-    find "$SCRIPT_DIR" -type f -name "*.sh" -exec grep -l "$query" {} \;
+    find "$SCRIPT_DIR/.." -type f -name "*.sh" -exec grep -l "$query" {} \;
 }
 
 # Recent History
@@ -197,7 +197,7 @@ show_header() {
     echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢰⡇⠀⠀⣸⠃⠀⠀⠀⠀⣴⠟⠁⠈⢻⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
     echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⠀⠀⢠⡟⠀⠀⠀⢠⡾⠃⠀⠀⣰⠟⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀"
     echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠓⠾⠁⠀⠀⣰⠟⠀⠀⢀⡾⠋⠀⠀⠀⢀⣴⣆⠀⠀⠀⠀⠀⠀⠀⠀"
-    echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣠⣤⣤⣤⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠙⠳⣦⣴⠟⠁⠀⠀⣠⡴⠋⠀⠈⢷⣄⠀⠀⠀⠀⠀⠀"
+    echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣠⣤⣤⣤⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠙⠳⣦⣴⠟⠁⠀⠀⣠⡴⠋⠀⠈⢷⣄⠀⠀⠀⠀⠀⠀"
     echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣴⣶⣿⣿⣿⣿⡿⠿⠿⠿⠿⠿⠿⣿⣿⣿⣿⣷⣦⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⣠⡾⠋⠀⠀⢀⣴⠟⠁⠀⠀⠀⠀⠀⠀"
     echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣶⣿⣿⡿⠟⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠻⢿⣿⣿⣶⣄⡀⠀⠀⠀⠺⣏⠀⠀⣀⡴⠟⠁⢀⣀⠀⠀⠀⠀⠀⠀"
     echo "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⣿⣿⠿⠋⠁⠀⢀⣴⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢶⣬⡙⠿⣿⣿⣶⣄⠀⠀⠙⢷⡾⠋⢀⣤⠾⠋⠙⢷⡀⠀⠀⠀⠀"
@@ -249,11 +249,11 @@ main_menu() {
         read -p "Choose an option: " CHOICE
         
         case $CHOICE in
-            1) "$(dirname "$0")/admin/system_ui.sh" ;;
+            1) "$SCRIPT_DIR/system_ui.sh" ;;
             2) show_development_menu ;;
             3) show_web_development_menu ;;
-            4) "$(dirname "$0")/utils/utility_menu.sh" ;;
-            5) "$(dirname "$0")/apps/terminal_launcher.sh" ;;
+            4) "$SCRIPT_DIR/../utils/utility_menu.sh" ;;
+            5) "$SCRIPT_DIR/../apps/terminal_launcher.sh" ;;
             6) show_script_management_menu ;;
             7) show_system_health_menu ;;
             8) show_settings_menu ;;
@@ -270,9 +270,9 @@ show_development_menu() {
         echo -e "${ACCENT}=== Development Tools ===${NC}"
         select dev_tool in "C++ Project Setup" "Go Project Setup" "Python Project Setup" "Back"; do
             case $dev_tool in
-                "C++ Project Setup") "$(dirname "$0")/dev/cpp_project_setup.sh" ;;
-                "Go Project Setup") "$(dirname "$0")/dev/go_project_setup.sh" ;;
-                "Python Project Setup") "$(dirname "$0")/dev/python_project_setup.sh" ;;
+                "C++ Project Setup") "$SCRIPT_DIR/../dev/cpp_project_setup.sh" ;;
+                "Go Project Setup") "$SCRIPT_DIR/../dev/go_project_setup.sh" ;;
+                "Python Project Setup") "$SCRIPT_DIR/../dev/python_project_setup.sh" ;;
                 "Back") return ;;
             esac
         done
@@ -285,8 +285,8 @@ show_web_development_menu() {
         echo -e "${ACCENT}=== Web Development Tools ===${NC}"
         select web_tool in "Flask Project Setup" "HTML Project Setup" "Back"; do
             case $web_tool in
-                "Flask Project Setup") "$(dirname "$0")/web/flask_project_setup.sh" ;;
-                "HTML Project Setup") "$(dirname "$0")/web/html_project_setup.sh" ;;
+                "Flask Project Setup") "$SCRIPT_DIR/../web/flask_project_setup.sh" ;;
+                "HTML Project Setup") "$SCRIPT_DIR/../web/html_project_setup.sh" ;;
                 "Back") return ;;
             esac
         done
